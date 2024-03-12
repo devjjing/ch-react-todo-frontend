@@ -1,18 +1,16 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {Link} from "react-router-dom";
 import {ToDo} from "./ToDo.tsx";
 import axios from "axios";
 
+
 type Props = {
     lastId: number;
-    onToDoChange: () => void,
     action: (values: ToDo) => void;
 };
 
 
-
 function CreateToDo(props: Props) {
-    const [text, setText] = useState("");
     const [values, setValues] = useState<ToDo>({
         id: props.lastId,
         name: '',
@@ -22,7 +20,7 @@ function CreateToDo(props: Props) {
         createDate: new Date(),
     });
 
-    const onChangeValues = (name: string, value: string | number) => {
+    const formUpdateHandler = (name: string, value: string | number) => {
         setValues({
             ...values,
             [name]: value,
@@ -30,17 +28,15 @@ function CreateToDo(props: Props) {
     }
 
     function saveHandler(){
-        setText("")
-        axios.post("/ToDo",
-            {} as ToDo)
-            .then(props.onToDoChange)
+        axios.post("/api/todo", //POST
+            values as ToDo)
     }
 
-    return <form onSubmit={(ev) => {
+    return <>
+        <form onSubmit={(ev) => {
         ev.preventDefault();
-        props.action(values);
         setValues({
-            id: props.lastId,
+            id: props.lastId,   // Set input to default values
             name: '',
             description: '',
             status: 'OPEN',
@@ -48,12 +44,23 @@ function CreateToDo(props: Props) {
             createDate: new Date(),
         })
     }}>
-        <input disabled value={values.id} type="number" name="id" onChange={(e) => onChangeValues(e.target.name, parseInt(e.target.value, 10))}/>
-        <input name="name" value={values.name} onChange={(e) => onChangeValues(e.target.name, e.target.value)}/>
-        <input name="description" value={values.description} onChange={(e) => onChangeValues(e.target.name, e.target.value)}/>
-        <button onClick={saveHandler}>Save</button>
-        <Link to={"/"}>Zurück zur Homepage</Link>
+            <p>ID</p><input disabled value={values.id} type="number" name="id" onChange={(e) => formUpdateHandler(e.target.name, parseInt(e.target.value, 10))}/>
+            <p>Name</p><input name="name" value={values.name} onChange={(e) => formUpdateHandler(e.target.name, e.target.value)}/>
+            <p>Description</p><input name="description" value={values.description} onChange={(e) => formUpdateHandler(e.target.name, e.target.value)}/>
+            <p>Status</p>
+            <select name="status" onChange={(e) => formUpdateHandler(e.target.name, e.target.value)}>
+                <option value='INACTIVE'>INACTIVE</option>
+                <option value='OPEN'>OPEN</option>
+                <option value='PROGRESSING'>PROGRESSING</option>
+                <option value='FINISHED'>FINISHED</option>
+                <option value='ARCHIVED'>ARCHIVED</option>
+            </select>
+            <p>User</p><input name="user" value={values.user} onChange={(e) => formUpdateHandler(e.target.name, e.target.value)}/>
+            <p>Creation Date</p><input name="createDate" value={values.createDate.toISOString().substring(0, 16)} onChange={(e) => formUpdateHandler(e.target.name, e.target.value)}/>
+            <div><button onClick={saveHandler}>Save</button></div>
     </form>
+        <Link to={"/"}>Zurück zur Homepage</Link>
+    </>
 }
 
 export default CreateToDo;

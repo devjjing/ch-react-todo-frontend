@@ -8,8 +8,8 @@ function Home() {
         alignItems: 'center',
     }}>
         <h1>Wilkommen!</h1>
-        <Link to={"/ToDo"}>Zu der ToDo-Liste</Link>
-        <Link to={"/create"}>ToDo-Eintrag erstellen</Link>
+        <Link to={"/todo"}>Zu der To-Do-Liste</Link>
+        <Link to={"/create"}>To-Do-Eintrag erstellen</Link>
     </div>
 }
 
